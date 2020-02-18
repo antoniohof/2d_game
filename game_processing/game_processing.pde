@@ -7,22 +7,39 @@ static enum State {
 
 State currentState;
 
+//box2d
+import shiffman.box2d.*;
+import org.jbox2d.common.*;
+import org.jbox2d.dynamics.joints.*;
+import org.jbox2d.collision.shapes.*;
+import org.jbox2d.collision.shapes.Shape;
+import org.jbox2d.common.*;
+import org.jbox2d.dynamics.*;
+import org.jbox2d.dynamics.contacts.*;
+
+Box2DProcessing box2d;
+
 // floating objects in the river
-ArrayList<Collidable> floatingObjects;
+ArrayList<Floater> floatingObjects;
 
 // my ants
 ArrayList<Ant> ants;
+PVector antMassCenter;
 
 // overall speed of objects appearing;
 float waterSpeed;
 
-int riverWidth;
+River river;
+float riverWidth;;
+
+boolean DEBUG_MODE = true;
 
 void changeState(State to) {
   switch (to) {
     case BEGIN:
       println("changed state to BEGIN");
       resetVariables();
+      addFirstObjects();
       break;
     case PLAYING:
       // to do reset all variables
@@ -40,17 +57,35 @@ void changeState(State to) {
 void resetVariables () {
   // start with just one ant
   ants.clear();
-  ants.add(new Ant()); 
-  
-  riverWidth = width/4;
+  floatingObjects.clear();  
+  antMassCenter = new PVector(width/2, height -100);
 }
 
+void addFirstObjects () {
+ floatingObjects.add(new Floater(FloaterType.NEUTRAL)); 
+ floatingObjects.add(new Floater(FloaterType.NEUTRAL)); 
+ floatingObjects.add(new Floater(FloaterType.NEUTRAL)); 
+
+ for (int i = 0; i < 20; i++) {
+   ants.add(new Ant(antMassCenter)); 
+ }
+}
 
 void setup () {
   size (800, 800);
-  ants = new ArrayList<Ant>();
-  floatingObjects = new ArrayList<Collidable>();
+  // Initialize box2d physics and create the world
+  box2d = new Box2DProcessing(this);
+  box2d.createWorld();
+  // We are setting a custom gravity
+  box2d.setGravity(0, 0);
+  
+  riverWidth = width/2;
 
+  river = new River(width/2 - (riverWidth/3), height/3, width/2 + riverWidth/3, height/3, width/2 + riverWidth, height, width/2 - (riverWidth), height);
+
+  ants = new ArrayList<Ant>();
+  floatingObjects = new ArrayList<Floater>();
+    
   changeState(State.BEGIN);
 }
 
@@ -58,9 +93,27 @@ void setup () {
 void draw () {  
   background(0);
   
+  // We must always step through time!
+  box2d.step();
+  
   drawBackground();
-  drawRiver();
-
+  // river.draw();
+  
+  for (int i = 0; i < floatingObjects.size(); i ++) {
+    floatingObjects.get(i).draw();
+    if (floatingObjects.get(i).done()) {
+      floatingObjects.remove(i);
+    }
+  }
+  
+  for (int i = 0; i < ants.size(); i++) {
+     ants.get(i).draw(); 
+  }
+  
+  if (DEBUG_MODE) {
+    river.debug();
+  }
+  
   
   switch (currentState) {
     case BEGIN:
@@ -79,6 +132,8 @@ void draw () {
 
 
  void drawBackground () {
+    rectMode(0);
+
     // sky
     fill(0,128,255);
     rect(0, 0, width, height/3); 
@@ -88,10 +143,3 @@ void draw () {
     rect(0, height/3, width, height - height/3); 
   }
   
-  void drawRiver () {
-    // grass
-    fill(0,0,255);
-    // width/2 - (riverWidth/2), height/3, riverWidth, height - height/3
-    quad(width/2 - (riverWidth/2), height/3, width/2 + riverWidth/2, height/3, width/2 + riverWidth, height, width/2 - (riverWidth), height); 
-    
-  }
