@@ -1,18 +1,21 @@
 // game state machine
 static enum State {
-  MENU,
+  BEGIN,
   PLAYING,
   END
 }
 
 State currentState;
 
+ArrayList<Collidable> floatingObjects;
+
 void changeState(State to) {
   switch (to) {
-    case MENU:
-      println("changed state to MENU");
+    case BEGIN:
+      println("changed state to BEGIN");
       break;
     case PLAYING:
+      // to do reset all variables
       println("changed state to PLAYING");
       break;
     case END:
@@ -25,12 +28,25 @@ void changeState(State to) {
 
 void setup () {
   size (500, 500);
-  background(0);
-  
-  currentState = State.MENU;
+  currentState = State.BEGIN;
 }
 
 
-void draw () {
+void draw () {  
+  background(0);
+
   
+  switch (currentState) {
+    case BEGIN:
+      println("BEGIN");
+      break;
+    case PLAYING:
+      println("PLAYING");
+      break;
+    case END:
+      println("END"); 
+      break;
+    default:
+      break;
+  }  
 }
