@@ -22,27 +22,89 @@ Box2DProcessing box2d;
 // floating objects in the river
 ArrayList<Floater> floatingObjects;
 
-// my ants
-ArrayList<Ant> ants;
-PVector antMassCenter;
 
-// overall speed of objects appearing;
-float waterSpeed;
+// configuration of difficulty and timers
+float intervalFloaters = 500.0;
+long lastFloaterBorn = 0;
 
 River river;
-float riverWidth;;
+
+AntBlob antBlob;
 
 boolean DEBUG_MODE = true;
+
+void setup () {
+  size (800, 800);
+  // Initialize box2d physics and create the world
+  box2d = new Box2DProcessing(this);
+  box2d.createWorld();
+  // We are setting a custom gravity
+  box2d.setGravity(0, -2);
+  box2d.listenForCollisions();
+  
+  river = new River();
+
+  floatingObjects = new ArrayList<Floater>();
+  antBlob = new AntBlob();
+  changeState(State.PLAYING);
+}
+
+
+void draw () {  
+  background(0);
+
+  drawBackground();
+  river.draw();
+
+  
+  switch (currentState) {
+    case BEGIN:
+      // println("BEGIN");
+      break;
+    case PLAYING:
+      // println("PLAYING");
+        
+      // We must always step through time!
+      box2d.step();
+      
+      
+      for (int i = 0; i < floatingObjects.size(); i ++) {
+        floatingObjects.get(i).draw();
+        if (floatingObjects.get(i).done()) {
+          floatingObjects.remove(i);
+        }
+      }
+      antBlob.draw();
+      
+      
+      if (millis() > lastFloaterBorn + intervalFloaters) {
+        lastFloaterBorn = millis();
+        floatingObjects.add(new Floater(FloaterType.NEUTRAL));
+      }
+  
+      break;
+    case END:
+      // println("END"); 
+      break;
+    default:
+      break;
+  }  
+  
+  
+   
+  if (DEBUG_MODE) {
+    river.debug();
+  }
+}
 
 void changeState(State to) {
   switch (to) {
     case BEGIN:
       println("changed state to BEGIN");
       resetVariables();
-      addFirstObjects();
       break;
     case PLAYING:
-      // to do reset all variables
+      addFirstObjects();
       println("changed state to PLAYING");
       break;
     case END:
@@ -55,80 +117,16 @@ void changeState(State to) {
 }
 
 void resetVariables () {
-  // start with just one ant
-  ants.clear();
-  floatingObjects.clear();  
-  antMassCenter = new PVector(width/2, height -100);
+  antBlob.reset();
+  floatingObjects.clear();
 }
 
 void addFirstObjects () {
  floatingObjects.add(new Floater(FloaterType.NEUTRAL)); 
  floatingObjects.add(new Floater(FloaterType.NEUTRAL)); 
  floatingObjects.add(new Floater(FloaterType.NEUTRAL)); 
-
- for (int i = 0; i < 20; i++) {
-   ants.add(new Ant(antMassCenter)); 
- }
 }
 
-void setup () {
-  size (800, 800);
-  // Initialize box2d physics and create the world
-  box2d = new Box2DProcessing(this);
-  box2d.createWorld();
-  // We are setting a custom gravity
-  box2d.setGravity(0, 0);
-  
-  riverWidth = width/2;
-
-  river = new River(width/2 - (riverWidth/3), height/3, width/2 + riverWidth/3, height/3, width/2 + riverWidth, height, width/2 - (riverWidth), height);
-
-  ants = new ArrayList<Ant>();
-  floatingObjects = new ArrayList<Floater>();
-    
-  changeState(State.BEGIN);
-}
-
-
-void draw () {  
-  background(0);
-  
-  // We must always step through time!
-  box2d.step();
-  
-  drawBackground();
-  // river.draw();
-  
-  for (int i = 0; i < floatingObjects.size(); i ++) {
-    floatingObjects.get(i).draw();
-    if (floatingObjects.get(i).done()) {
-      floatingObjects.remove(i);
-    }
-  }
-  
-  for (int i = 0; i < ants.size(); i++) {
-     ants.get(i).draw(); 
-  }
-  
-  if (DEBUG_MODE) {
-    river.debug();
-  }
-  
-  
-  switch (currentState) {
-    case BEGIN:
-      // println("BEGIN");
-      break;
-    case PLAYING:
-      // println("PLAYING");
-      break;
-    case END:
-      // println("END"); 
-      break;
-    default:
-      break;
-  }  
-}
 
 
  void drawBackground () {

@@ -1,18 +1,34 @@
 class Ant extends Collidable {
+  
+  PImage img;
+  Spring spring;
+  
   // constructor
   Ant (PVector p) {
-    super(BodyType.STATIC, -2, -10, -10, 10, 10, 10, 2, -10);
-    
+    super(BodyType.DYNAMIC, -2, -10, -10, 10, 10, 10, 2, -10);
+    int spread = 50;
     // randomly around center of ants
-    makeBody(new Vec2(p.x + random(-10, 10), p.y + random(-10, 10)));
+    makeBody(new Vec2(p.x + random(-spread, spread), p.y + random(-spread,spread)));
+    
+        
+      // Make the spring (it doesn't really get initialized until the mouse is clicked)
+    spring = new Spring();
+    spring.bind(p.x, p.y, body);
+    
+    img = loadImage("images/formiga.png");
+    image(img, 0, 0);
   }
   
-  PVector position;
-  PImage thumbnail;
   
-  void draw () {
+  void draw (Vec2 pos) {
+    spring.update(pos.x, pos.y);
+
+    update();
     if (DEBUG_MODE) {
-      super.debug();
+      super.debug(); 
     }
+    imageMode(CENTER);
+    image(img, position.x, position.y, 50, 50);
   }
+  
 }

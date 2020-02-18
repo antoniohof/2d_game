@@ -2,9 +2,10 @@ class Collidable {
 
   // We need to keep track of a Body and a width and height
   Body body;
-  
-  PVector position;
-  
+  private Vec2 pos;
+  public PVector position;
+  float angle;
+
   BodyType bodyType;
   
   float x1;
@@ -44,8 +45,6 @@ class Collidable {
 
   // Is the particle ready for deletion?
   boolean done() {
-    // Let's find the screen position of the particle
-    Vec2 pos = box2d.getBodyPixelCoord(body);
     // Is it off the bottom of the screen?
     if (pos.y > height) {
       killBody();
@@ -53,17 +52,18 @@ class Collidable {
     }
     return false;
   }
+  
+  
+  void update () {
+    pos = box2d.getBodyPixelCoord(body);
+    angle = body.getAngle();
+    position.x = pos.x;
+    position.y = pos.y; 
+  }
+  
 
   // Drawing the box
   void debug() {
-    // We look at each body and get its screen position
-    Vec2 pos = box2d.getBodyPixelCoord(body);
-    
-    position.x = pos.x;
-    position.y = pos.y;
-
-    // Get its angle of rotation
-    float a = body.getAngle();
 
     Fixture f = body.getFixtureList();
     PolygonShape ps = (PolygonShape) f.getShape();
@@ -72,8 +72,8 @@ class Collidable {
        rectMode(CENTER);
 
       translate(pos.x, pos.y);
-      rotate(-a);
-      fill(175);
+      rotate(-angle);
+      fill(255, 0, 0);
       stroke(0);
       beginShape();
       //println(vertices.length);
@@ -93,12 +93,7 @@ class Collidable {
     PolygonShape sd = new PolygonShape();
 
     Vec2[] vertices = new Vec2[4];
-    /*
-    vertices[0] = box2d.vectorPixelsToWorld(new Vec2(-10, -10));
-    vertices[1] = box2d.vectorPixelsToWorld(new Vec2(-10, 10));
-    vertices[2] = box2d.vectorPixelsToWorld(new Vec2(10, 10));
-    vertices[3] = box2d.vectorPixelsToWorld(new Vec2(10, -10));
-    */
+
     vertices[0] = box2d.vectorPixelsToWorld(new Vec2(x1, y1));
     vertices[1] = box2d.vectorPixelsToWorld(new Vec2(x2, y2));
     vertices[2] = box2d.vectorPixelsToWorld(new Vec2(x3, y3));

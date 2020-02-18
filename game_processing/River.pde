@@ -14,96 +14,129 @@ class River {
 
   private Body leftMargin;
   private Body rightMargin;
+  float riverWidth;
+  
+  River() {
+    riverWidth = width/2;
 
-  River(float _x1,float _y1, float _x2,float _y2, float _x3,float _y3, float _x4,float _y4) {
-    x1 = _x1;
-    y1 = _y1;
+    x1 = width/2 - (riverWidth/3);
+    y1 = height/3;
 
-    x2 = _x2;
-    y2 = _y2;
+    x2 = width/2 + riverWidth/3;
+    y2 = height/3;
     
-    x3 = _x3;
-    y3 = _y3;
+    x3 = width/2 + riverWidth;
+    y3 = height;
     
-    x4 = _x4;
-    y4 = _y4;
+    x4 = width/2 - (riverWidth);
+    y4 = height;
         
-    createMargins();
+    createLeftMargin();
+    createRightMargin();
   }
 
   
-  void createMargins () {
-   // left
-    PolygonShape sdLeft = new PolygonShape();
-
-    Vec2[] verticesLeft = new Vec2[4];
-    verticesLeft[0] = new Vec2(x1, y1);
-    verticesLeft[1] = new Vec2(x1 + 4, y1);
-    verticesLeft[2] = new Vec2(x4 + 4, y4);
-    verticesLeft[3] = new Vec2(x4, y4);
+  void createLeftMargin () {
     
+    // left margin
+    PolygonShape sd = new PolygonShape();
+    // Figure out the box2d coordinates
+    float box2dW = box2d.scalarPixelsToWorld(5);
+    float box2dH = box2d.scalarPixelsToWorld(290);
+    // We're just a box
+    sd.setAsBox(box2dW, box2dH);
 
-    sdLeft.set(verticesLeft, verticesLeft.length);
 
-    // Define the body and make it from the shape
-    BodyDef bdLeft = new BodyDef();
-    bdLeft.type = BodyType.STATIC;
-    bdLeft.position.set(0,0);
-    leftMargin = box2d.createBody(bdLeft);
-
-    leftMargin.createFixture(sdLeft, 1.0); 
+    // Create the body
+    BodyDef bd = new BodyDef();
+    bd.type = BodyType.STATIC;
+    bd.angle = 2.679; 
+    bd.position.set(box2d.coordPixelsToWorld(x1 - riverWidth/3, y2 + (height - y2)/2));
+    leftMargin = box2d.createBody(bd);
     
-    //right
-    PolygonShape sdRight = new PolygonShape();
-
-    Vec2[] verticesRight = new Vec2[4];
-    verticesRight[0] = new Vec2(x2, y2);
-    verticesRight[1] = new Vec2(x2 + 4, y2);
-    verticesRight[2] = new Vec2(x3 + 4, y3);
-    verticesRight[3] = new Vec2(x3, y3);
+    // Attached the shape to the body using a Fixture
+    leftMargin.createFixture(sd,1);
     
+  }
+  
+  void createRightMargin () {
+       
+    
+    // rigjt margin
+    PolygonShape sd = new PolygonShape();
+    // Figure out the box2d coordinates
+    float box2dW = box2d.scalarPixelsToWorld(5);
+    float box2dH = box2d.scalarPixelsToWorld(290);
+    // We're just a box
+    sd.setAsBox(box2dW, box2dH);
 
-    sdRight.set(verticesRight, verticesRight.length);
 
-    // Define the body and make it from the shape
-    BodyDef bdRight = new BodyDef();
-    bdRight.type = BodyType.STATIC;
-    bdRight.position.set(0,0);
-    rightMargin = box2d.createBody(bdRight);
-
-    rightMargin.createFixture(sdRight, 1.0); 
+    // Create the body
+    BodyDef bd = new BodyDef();
+    bd.type = BodyType.STATIC;
+    bd.angle = -2.679; 
+    bd.position.set(box2d.coordPixelsToWorld(x3 - riverWidth/3, y2 + (height - y2)/2));
+    rightMargin = box2d.createBody(bd);
+    
+    // Attached the shape to the body using a Fixture
+    rightMargin.createFixture(sd,1);
+     
     
   }
 
   // Drawing the boundaries for debug
   void debug() {
     
+    // We look at each body and get its screen position
+    Vec2 posL = box2d.getBodyPixelCoord(leftMargin);
+    // Get its angle of rotation
+    float aL = leftMargin.getAngle();
+
     Fixture fL = leftMargin.getFixtureList();
     PolygonShape psL = (PolygonShape) fL.getShape();
-    fill(255,0, 0);
 
+    pushMatrix();
+
+    rectMode(CENTER);
+    translate(posL.x, posL.y);
+    rotate(-aL);
+    fill(255, 0, 0);
+    stroke(0);
     beginShape();
     //println(vertices.length);
     // For every vertex, convert to pixel vector
     for (int i = 0; i < psL.getVertexCount(); i++) {
-      Vec2 v = psL.getVertex(i);
-      vertex(v.x, v.y);
+      Vec2 vL = box2d.vectorWorldToPixels(psL.getVertex(i));
+      vertex(vL.x, vL.y);
     }
     endShape(CLOSE);
-
+    popMatrix();
+    
+    
+    // We look at each body and get its screen position
+    Vec2 posR = box2d.getBodyPixelCoord(rightMargin);
+    // Get its angle of rotation
+    float aR = rightMargin.getAngle();
 
     Fixture fR = rightMargin.getFixtureList();
     PolygonShape psR = (PolygonShape) fR.getShape();
-    fill(255,0,0);
 
+    pushMatrix();
+
+    rectMode(CENTER);
+    translate(posR.x, posR.y);
+    rotate(-aR);
+    fill(255, 0, 0);
+    stroke(0);
     beginShape();
     //println(vertices.length);
     // For every vertex, convert to pixel vector
     for (int i = 0; i < psR.getVertexCount(); i++) {
-      Vec2 v = psR.getVertex(i);
-      vertex(v.x, v.y);
+      Vec2 vR = box2d.vectorWorldToPixels(psR.getVertex(i));
+      vertex(vR.x, vR.y);
     }
     endShape(CLOSE);
+    popMatrix();
   }
   
   //draw river
