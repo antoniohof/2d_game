@@ -292,16 +292,6 @@ void beginContact(Contact cp) {
 void endContact(Contact cp) {
 }
 
-// function to check if coordinate is over rect
-boolean overRect(int x, int y, int width, int height) {
-  if (mouseX >= x && mouseX <= x+width && 
-    mouseY >= y && mouseY <= y+height) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
 void mousePressed () {
   if (currentState == State.BEGIN &&
     mouseX >= startButtonX && mouseX <= startButtonX+startButtonWidth && 
