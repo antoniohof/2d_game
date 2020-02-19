@@ -2,20 +2,20 @@ class River {
 
   float x1;
   float y1;
-  
+
   float x2;
   float y2;
-  
+
   float x3;
   float y3;
-  
+
   float x4;
   float y4;
 
   private Body leftMargin;
   private Body rightMargin;
   float riverWidth;
-  
+
   River() {
     riverWidth = width/2;
 
@@ -24,20 +24,20 @@ class River {
 
     x2 = width/2 + riverWidth/3;
     y2 = height/3;
-    
+
     x3 = width/2 + riverWidth;
     y3 = height;
-    
+
     x4 = width/2 - (riverWidth);
     y4 = height;
-        
+
     createLeftMargin();
     createRightMargin();
   }
 
-  
+
   void createLeftMargin () {
-    
+
     // left margin
     PolygonShape sd = new PolygonShape();
     // Figure out the box2d coordinates
@@ -53,15 +53,14 @@ class River {
     bd.angle = 2.679; 
     bd.position.set(box2d.coordPixelsToWorld(0, y2 + (height - y2)));
     leftMargin = box2d.createBody(bd);
-    
+
     // Attached the shape to the body using a Fixture
-    leftMargin.createFixture(sd,1);
-    
+    leftMargin.createFixture(sd, 1);
   }
-  
+
   void createRightMargin () {
-       
-    
+
+
     // rigjt margin
     PolygonShape sd = new PolygonShape();
     // Figure out the box2d coordinates
@@ -77,16 +76,14 @@ class River {
     bd.angle = -2.679; 
     bd.position.set(box2d.coordPixelsToWorld(width, y2 + (height - y2)));
     rightMargin = box2d.createBody(bd);
-    
+
     // Attached the shape to the body using a Fixture
-    rightMargin.createFixture(sd,1);
-     
-    
+    rightMargin.createFixture(sd, 1);
   }
 
   // Drawing the boundaries for debug
   void debug() {
-    
+
     // We look at each body and get its screen position
     Vec2 posL = box2d.getBodyPixelCoord(leftMargin);
     // Get its angle of rotation
@@ -111,8 +108,8 @@ class River {
     }
     endShape(CLOSE);
     popMatrix();
-    
-    
+
+
     // We look at each body and get its screen position
     Vec2 posR = box2d.getBodyPixelCoord(rightMargin);
     // Get its angle of rotation
@@ -138,12 +135,10 @@ class River {
     endShape(CLOSE);
     popMatrix();
   }
-  
+
   //draw river
   void draw() {
-   fill(0, 0, 255);
-   quad(x1, y1, x2, y2, x3, y3, x4, y4);
+    fill(0, 0, 255);
+    quad(x1, y1, x2, y2, x3, y3, x4, y4);
   }
- 
-
 }
