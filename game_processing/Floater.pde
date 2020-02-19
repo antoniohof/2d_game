@@ -1,4 +1,4 @@
-
+// generic class for the debris in the river
 
 class Floater extends Collidable {
   PImage image;

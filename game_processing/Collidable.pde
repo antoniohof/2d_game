@@ -1,3 +1,5 @@
+// generic class for the any collidable. It is destroyed when y is bigger than screen height.
+
 class Collidable {
 
   Body body;
@@ -110,7 +112,7 @@ class Collidable {
     // Parameters that affect physics
     fd.density = density;
     fd.friction = friction;
-    fd.restitution = 0.1;
+    fd.restitution = 0.4;
     body.createFixture(fd);
   }
 

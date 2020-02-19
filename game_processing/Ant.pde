@@ -3,14 +3,18 @@ class Ant extends Collidable {
   PImage img;
   Spring spring;
 
+  // if is attached to ant blob
   boolean attached = false;
-  int spread = 40;
+  
+  // spring distance when attaching ant
+  int spread = 30;
 
 
   // overloaded constructor for ant as a floater
   Ant () {
     super(BodyType.DYNAMIC, -2, -10, -10, 10, 10, 10, 2, -10);
     println("NEW FLOTER ANT");
+    attached = false;
 
     // randomize right / left where floaters are born
     int rand = (int)random(0, 100);
@@ -25,19 +29,6 @@ class Ant extends Collidable {
     body.setUserData(this);
 
     spring = new Spring();
-
-    img = antImage;
-  }
-
-  // constructor for ant in the begining
-  Ant (PVector p) {
-    super(BodyType.DYNAMIC, -2, -10, -10, 10, 10, 10, 2, -10);
-    // randomly around center of ants
-    makeBody(new Vec2(p.x + random(-spread, spread), p.y + random(-spread, spread)), 1, 0);
-    body.setUserData(this);
-
-    spring = new Spring();
-    println("NEW GROUP ANT");
 
     img = antImage;
   }
@@ -78,13 +69,6 @@ class Ant extends Collidable {
       attached = true;
       println("ANT ATTACHED!");
       spring.bind(position.x + random(-spread, spread), position.y + random(-spread, spread), body);
-    }
-  }
-
-  void attach (PVector p) {
-    if (!attached) {
-      attached = true;
-      spring.bind(p.x, p.y, body);
     }
   }
 }

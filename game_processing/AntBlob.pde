@@ -1,3 +1,5 @@
+// class to manage the how ants behave together around the queen
+
 class AntBlob {
 
   // my ants
@@ -7,7 +9,6 @@ class AntBlob {
   private int colliderSize = 40;
 
   private Body body;
-
 
   AntBlob () {
     ants = new ArrayList<Ant>();
@@ -29,7 +30,7 @@ class AntBlob {
 
     // Define the body and make it from the shape
     BodyDef bd = new BodyDef();
-    bd.type = BodyType.DYNAMIC;
+    bd.type = BodyType.STATIC;
     bd.position.set(box2d.coordPixelsToWorld(antMassCenter));
     bd.angle = random(TWO_PI);
 
@@ -40,11 +41,6 @@ class AntBlob {
 
 
     queenImg = loadImage("images/queen.png");
-    for (int i = 0; i < 1; i++) {
-      Ant ant = new Ant(antMassCenter);
-      ants.add(ant); 
-      ant.attach(antMassCenter);
-    }
   }
 
 
@@ -94,6 +90,11 @@ class AntBlob {
   }
 
   void reset () {
+    antMassCenter = new PVector(width/2, height -100);
+    for (int i = 0; i < ants.size(); i++) {
+      ants.get(i).killBody();
+      ants.remove(ants.get(i));
+    }
     ants.clear();
   }
 }

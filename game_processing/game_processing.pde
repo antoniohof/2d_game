@@ -31,7 +31,7 @@ float chanceAntBorn = 0.2;
 // playing round time variables
 long lastFloaterBorn = 0;
 long roundStartTime = 0;
-long roundTotalDuration = 60000;
+long roundTotalDuration = 80000;
 long roundElapsedTime = 0;
 
 // start playing button vars
@@ -60,6 +60,8 @@ PImage antImage;
 
 void setup () {
   size (800, 800);
+  frameRate(60);
+  
   // Initialize box2d physics and create the world
   box2d = new Box2DProcessing(this);
   box2d.createWorld();
@@ -74,18 +76,19 @@ void setup () {
   antBlob = new AntBlob();
   floaterTypesArray = new ArrayList<Pair>();
 
+  // populate types of floating  debris objects
   floaterTypesArray.add(new Pair<PImage, PVector>(loadImage("images/lixo.png"), new PVector(20, 20)));
   floaterTypesArray.add(new Pair<PImage, PVector>(loadImage("images/boia.png"), new PVector(20, 20)));
   floaterTypesArray.add(new Pair<PImage, PVector>(loadImage("images/wood.png"), new PVector(35, 10)));
   floaterTypesArray.add(new Pair<PImage, PVector>(loadImage("images/plasticbag.png"), new PVector(30, 30)));
   floaterTypesArray.add(new Pair<PImage, PVector>(loadImage("images/menina.png"), new PVector(20, 20)));
 
+  // set start button position
   startButtonX = width/2 - startButtonWidth/2;
   startButtonY = height/2- startButtonHeight/2;
 
   changeState(State.BEGIN);
 
-  frameRate(60);
 }
 
 
@@ -186,9 +189,9 @@ void changeState(State to) {
   switch (to) {
   case BEGIN:
     println("changed state to BEGIN");
-    resetVariables();
     break;
   case PLAYING:
+    resetVariables();
     roundStartTime = millis();
     println("changed state to PLAYING");
     break;
@@ -204,10 +207,14 @@ void changeState(State to) {
 
 void resetVariables () {
   antBlob.reset();
+  for (int i = 0; i < floatingObjects.size(); i++){
+    floatingObjects.remove(floatingObjects.get(i));
+  }
   floatingObjects.clear();
   riverSpeed = 2;
   intervalFloaters = 500.0;
   endStateElapsedTime = 0;
+  lastFloaterBorn = 0;
   roundElapsedTime = 0;
 }
 
