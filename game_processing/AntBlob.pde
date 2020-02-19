@@ -30,7 +30,7 @@ class AntBlob {
 
     // Define the body and make it from the shape
     BodyDef bd = new BodyDef();
-    bd.type = BodyType.STATIC;
+    bd.type = BodyType.DYNAMIC;
     bd.position.set(box2d.coordPixelsToWorld(antMassCenter));
     bd.angle = random(TWO_PI);
 
@@ -92,6 +92,7 @@ class AntBlob {
   void reset () {
     antMassCenter = new PVector(width/2, height -100);
     for (int i = 0; i < ants.size(); i++) {
+      ants.get(i).spring.destroy();
       ants.get(i).killBody();
       ants.remove(ants.get(i));
     }

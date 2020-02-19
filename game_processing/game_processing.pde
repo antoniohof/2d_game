@@ -26,7 +26,7 @@ Box2DProcessing box2d;
 float intervalFloaters = 500.0;
 float riverSpeed = 2;
 // change of an ant to appear in the river
-float chanceAntBorn = 0.2;
+float chanceAntBorn = 0.3;
 
 // playing round time variables
 long lastFloaterBorn = 0;
@@ -208,6 +208,7 @@ void changeState(State to) {
 void resetVariables () {
   antBlob.reset();
   for (int i = 0; i < floatingObjects.size(); i++){
+    floatingObjects.get(i).killBody();
     floatingObjects.remove(floatingObjects.get(i));
   }
   floatingObjects.clear();
