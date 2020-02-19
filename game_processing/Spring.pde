@@ -9,7 +9,7 @@ class Spring {
 
   // This is the box2d object we need to create
   MouseJoint mouseJoint;
-
+  Body bodyAttached;
   Spring() {
     // At first it doesn't exist
     mouseJoint = null;
@@ -46,6 +46,8 @@ class Spring {
   // we attach the spring to an x,y location
   // and the Box object's location
   void bind(float x, float y, Body b) {
+    box2d.world.step(0,0,0);
+
     // Define the joint
     MouseJointDef md = new MouseJointDef();
     
@@ -53,6 +55,7 @@ class Spring {
     md.bodyA = box2d.getGroundBody();
     // Body 2 is the box's boxy
     md.bodyB = b;
+    bodyAttached = b;
     // Get the mouse location in world coordinates
     Vec2 mp = box2d.coordPixelsToWorld(x,y);
     // And that's the target
@@ -60,7 +63,7 @@ class Spring {
     // Some stuff about how strong and bouncy the spring should be
     md.maxForce = 1000.0f * b.m_mass;
     md.frequencyHz = 5.0f;
-    md.dampingRatio = 0.9f;
+    md.dampingRatio = 5.9f;
 
     // Wake up body!
     //box.body.wakeUp();
@@ -69,12 +72,19 @@ class Spring {
     mouseJoint = (MouseJoint) box2d.world.createJoint(md);
   }
 
-  void destroy() {
+  boolean destroy() {
+    box2d.world.step(0,0,0);
     // We can get rid of the joint when the mouse is released
     if (mouseJoint != null) {
-      box2d.world.destroyJoint(mouseJoint);
-      mouseJoint = null;
+      if (!box2d.world.isLocked()) {
+        box2d.world.destroyJoint(mouseJoint);
+        mouseJoint = null;
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return true;
     }
   }
-
 }

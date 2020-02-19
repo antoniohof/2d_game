@@ -42,7 +42,7 @@ class River {
     PolygonShape sd = new PolygonShape();
     // Figure out the box2d coordinates
     float box2dW = box2d.scalarPixelsToWorld(5);
-    float box2dH = box2d.scalarPixelsToWorld(290);
+    float box2dH = box2d.scalarPixelsToWorld(590);
     // We're just a box
     sd.setAsBox(box2dW, box2dH);
 
@@ -51,7 +51,7 @@ class River {
     BodyDef bd = new BodyDef();
     bd.type = BodyType.STATIC;
     bd.angle = 2.679; 
-    bd.position.set(box2d.coordPixelsToWorld(x1 - riverWidth/3, y2 + (height - y2)/2));
+    bd.position.set(box2d.coordPixelsToWorld(0, y2 + (height - y2)));
     leftMargin = box2d.createBody(bd);
     
     // Attached the shape to the body using a Fixture
@@ -66,7 +66,7 @@ class River {
     PolygonShape sd = new PolygonShape();
     // Figure out the box2d coordinates
     float box2dW = box2d.scalarPixelsToWorld(5);
-    float box2dH = box2d.scalarPixelsToWorld(290);
+    float box2dH = box2d.scalarPixelsToWorld(590);
     // We're just a box
     sd.setAsBox(box2dW, box2dH);
 
@@ -75,7 +75,7 @@ class River {
     BodyDef bd = new BodyDef();
     bd.type = BodyType.STATIC;
     bd.angle = -2.679; 
-    bd.position.set(box2d.coordPixelsToWorld(x3 - riverWidth/3, y2 + (height - y2)/2));
+    bd.position.set(box2d.coordPixelsToWorld(width, y2 + (height - y2)));
     rightMargin = box2d.createBody(bd);
     
     // Attached the shape to the body using a Fixture

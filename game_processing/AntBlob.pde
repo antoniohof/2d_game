@@ -10,13 +10,14 @@ class AntBlob {
 
 
    for (int i = 0; i < 20; i++) {
-     ants.add(new Ant(antMassCenter)); 
+     Ant ant = new Ant(antMassCenter);
+     ants.add(ant); 
+     ant.attach(antMassCenter);
    }
   }
   
   
   void draw () {
-    
    for (int i = 0; i < ants.size(); i++) {
      ants.get(i).draw(new Vec2(mouseX, height -100)); 
     } 
@@ -26,7 +27,6 @@ class AntBlob {
     ants.clear(); 
   }
 
-  
   
   
 }

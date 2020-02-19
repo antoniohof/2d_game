@@ -109,4 +109,10 @@ class Collidable {
 
     body.createFixture(sd, 1.0);
   }
+  
+  // abstract?
+  void draw () {
+    
+    
+  }
 }
