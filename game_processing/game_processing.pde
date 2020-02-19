@@ -38,7 +38,7 @@ River river;
 
 AntBlob antBlob;
 
-boolean DEBUG_MODE = true;
+boolean DEBUG_MODE = false;
 
 void setup () {
   size (800, 800);
@@ -151,7 +151,27 @@ void beginContact(Contact cp) {
   
   if (o1 == null || o2 == null) return;
   
-   if (o1.getClass() == Ant.class && o2.getClass() == Floater.class) {
+   if (o1.getClass() == AntBlob.class && o2.getClass() == Ant.class) {
+     Ant ant = (Ant) o2;
+     if (!ant.attached) {
+        ant.attach(); 
+     }
+   }
+   
+  if (o1.getClass() == Ant.class && o2.getClass() == AntBlob.class) {
+     Ant ant = (Ant) o1;
+     if (!ant.attached) {
+        ant.attach(); 
+     }
+   }
+  
+   if (o1.getClass() == Floater.class && o2.getClass() == Ant.class) {
+     Ant ant = (Ant) o2;
+     if (ant.attached) {
+        ant.dettach(); 
+     }
+   }
+    if (o1.getClass() == Ant.class && o2.getClass() == Floater.class) {
      Ant ant = (Ant) o1;
      if (ant.attached) {
         ant.dettach(); 
@@ -162,8 +182,12 @@ void beginContact(Contact cp) {
      Ant ant1 = (Ant) o1;
      Ant ant2 = (Ant) o2;
 
-     if (!ant1.attached) {
-        ant1.attach(ant2.position); 
+     if (!ant2.attached && ant1.attached) {
+       ant2.attach(); 
+     }
+     
+    if (!ant1.attached && ant2.attached) {
+       ant1.attach(); 
      }
 
    }

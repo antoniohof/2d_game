@@ -87,7 +87,7 @@ class Collidable {
   }
 
   // This function adds the rectangle to the box2d world
-  void makeBody(Vec2 center) {
+  void makeBody(Vec2 center, float density, float friction) {
 
     // Define a polygon (this is what we use for a rectangle)
     PolygonShape sd = new PolygonShape();
@@ -106,8 +106,14 @@ class Collidable {
     bd.type = bodyType;
     bd.position.set(box2d.coordPixelsToWorld(center));
     body = box2d.createBody(bd);
-
-    body.createFixture(sd, 1.0);
+    pos = box2d.getBodyPixelCoord(body);
+    FixtureDef fd = new FixtureDef();
+    fd.shape = sd;
+    // Parameters that affect physics
+    fd.density = density;
+    fd.friction = friction;
+    fd.restitution = 0.1;
+    body.createFixture(fd);
   }
   
   // abstract?

@@ -4,33 +4,64 @@ class Ant extends Collidable {
   Spring spring;
   
   boolean attached = false;
+  int spread = 40;
+
   
-  // constructor
-  Ant (PVector p) {
+  // overloaded constructor for ant as a floater
+  Ant () {
     super(BodyType.DYNAMIC, -2, -10, -10, 10, 10, 10, 2, -10);
-    int spread = 30;
-    // randomly around center of ants
-    makeBody(new Vec2(p.x + random(-spread, spread), p.y + random(-spread,spread)));
+        println("NEW FLOTER ANT");
+
+    // randomize right / left where floaters are born
+    int rand = (int)random(0, 100);
+    if (rand % 2 == 0) {
+      makeBody(new Vec2(random ((width/2) - 100, width/2), height/3 + 10), 1, 0.9);
+      body.setLinearVelocity(new Vec2(random(-3.0, 0), random(-2, -15)));
+
+    } else {
+      makeBody(new Vec2(random (width/2, (width/2) + 100), height/3 + 10), 1, 0.9);
+      body.setLinearVelocity(new Vec2(random(0, 3), random(-2, -15)));
+    }
+   
     body.setUserData(this);
 
     spring = new Spring();
     
     img = loadImage("images/formiga.png");
-    image(img, 0, 0);
+  }
+  
+  // constructor for ant in the begining
+  Ant (PVector p) {
+    super(BodyType.DYNAMIC, -2, -10, -10, 10, 10, 10, 2, -10);
+    // randomly around center of ants
+    makeBody(new Vec2(p.x + random(-spread, spread), p.y + random(-spread,spread)), 1, 0.9);
+    body.setUserData(this);
+
+    spring = new Spring();
+    println("NEW GROUP ANT");
+
+    img = loadImage("images/formiga.png");
   }
   
   
-  void draw (Vec2 pos) {
+  void draw () {
     if (attached) {
-      spring.update(pos.x, pos.y);
+      spring.update(mouseX, height -100);
     }
     update();
     if (DEBUG_MODE) {
       super.debug(); 
     }
+    
+    float scaleY = pow((position.y/height) + 0.15 , 1.5); 
     pushMatrix();
-      imageMode(CENTER);
-      image(img, position.x, position.y, 50, 50);
+
+    imageMode(CENTER);
+    translate(position.x, position.y);
+    rotate(-angle);
+    translate(-position.x, -position.y);
+    image(img, position.x, position.y, 50 * scaleY, 50 * scaleY);
+  
     popMatrix();
   }
   
@@ -41,6 +72,14 @@ class Ant extends Collidable {
        println("ANT DETTACHED!");
      }
    }
+  }
+  
+  void attach () {
+    if (!attached) {
+      attached = true;
+      println("ANT ATTACHED!");
+      spring.bind(position.x + random(-spread, spread), position.y + random(-spread,spread), body);
+    }
   }
   
   void attach (PVector p) {
