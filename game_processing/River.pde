@@ -1,3 +1,4 @@
+// river margins box2d colliders and image
 class River {
 
   float x1;

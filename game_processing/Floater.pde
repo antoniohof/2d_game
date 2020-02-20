@@ -1,9 +1,10 @@
-// generic class for the debris in the river
+// class for the debris in the river, receives and image and dimensions in the constructor.
 
 class Floater extends Collidable {
   PImage image;
   int fWidth;
   int fHeight;
+  
   // constructor
   Floater (PImage _image, int w, int h) {
     super(BodyType.DYNAMIC, -w, -h, -w, h, w, h, w, -h);
@@ -26,7 +27,8 @@ class Floater extends Collidable {
       body.setLinearVelocity(new Vec2(random(0, sideForce), random(-2, -15)));
     }
     body.setUserData(this);
-
+    
+  // make them rotate a bit
     body.setAngularVelocity(random(-3, 3));
   }
 

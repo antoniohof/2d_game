@@ -1,3 +1,4 @@
+// Ant class, can be attached to antblob or floating in the river.
 class Ant extends Collidable {
 
   PImage img;

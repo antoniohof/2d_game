@@ -1,11 +1,12 @@
 // class to manage the how ants behave together around the queen //<>//
-
 class AntBlob {
 
-  // my ants
+  // ants attached to the queen
   public ArrayList<Ant> ants;
+  // position of the queen
   PVector antMassCenter;
   private PImage queenImg;
+  // size of queen collider
   private int colliderSize = 10;
 
   public Body body;
