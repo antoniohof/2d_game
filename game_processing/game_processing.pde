@@ -24,14 +24,16 @@ Box2DProcessing box2d;
 
 // configuration of difficulty
 float intervalFloaters = 500.0;
+float minIntervalFloaters = 20.0f;
 float riverSpeed = 2;
+float riverMaxSpeed = 12;
 // change of an ant to appear in the river
 float chanceAntBorn = 0.3;
 
 // playing round time variables
 long lastFloaterBorn = 0;
 long roundStartTime = 0;
-long roundTotalDuration = 80000;
+long roundTotalDuration = 100000;
 long roundElapsedTime = 0;
 
 // start playing button vars
@@ -61,7 +63,7 @@ PImage antImage;
 void setup () {
   size (800, 800);
   frameRate(60);
-  
+
   // Initialize box2d physics and create the world
   box2d = new Box2DProcessing(this);
   box2d.createWorld();
@@ -88,7 +90,6 @@ void setup () {
   startButtonY = height/2- startButtonHeight/2;
 
   changeState(State.BEGIN);
-
 }
 
 
@@ -141,12 +142,12 @@ void draw () {
     fill(0, 102, 153);
 
     // difficulty over time adjust
-    if (riverSpeed < 10) {
+    if (riverSpeed < riverMaxSpeed) {
       riverSpeed+=0.002;
       box2d.setGravity(0, -riverSpeed);
     }
 
-    if (intervalFloaters > 100) {
+    if (intervalFloaters > minIntervalFloaters) {
       intervalFloaters-=0.01;
     }
 
@@ -165,7 +166,7 @@ void draw () {
     }
     break;
   case END:
-    textSize(42);
+    textSize(38);
     fill(0, 255, 0);
     textAlign(CENTER);
     text("YOU SAVED " + antBlob.ants.size() + " ANTS FROM APOCALIPSE", width/2, 120); 
@@ -207,11 +208,11 @@ void changeState(State to) {
 
 void resetVariables () {
   antBlob.reset();
-  for (int i = 0; i < floatingObjects.size(); i++){
+  for (int i = 0; i < floatingObjects.size(); i++) {
     floatingObjects.get(i).killBody();
     floatingObjects.remove(floatingObjects.get(i));
   }
-  floatingObjects.clear();
+  floatingObjects = new ArrayList<Collidable>();
   riverSpeed = 2;
   intervalFloaters = 500.0;
   endStateElapsedTime = 0;
@@ -222,7 +223,9 @@ void resetVariables () {
 void addRandomNewObject () {
   float rand = (float)random(0, 1);
   if (rand < chanceAntBorn) {
-    floatingObjects.add(new Ant());
+    Ant n = new Ant();
+    n.attached = false;
+    floatingObjects.add(n);
   } else {
     // get random from array of floater types
     int randFloaterIndex = (int)random(0, floaterTypesArray.size());
@@ -252,6 +255,7 @@ void beginContact(Contact cp) {
   if (o1.getClass() == AntBlob.class && o2.getClass() == Ant.class) {
     Ant ant = (Ant) o2;
     if (!ant.attached) {
+      println("add to blob 1");
       antBlob.addToBlob(ant);
       floatingObjects.remove(ant);
     }
@@ -260,6 +264,7 @@ void beginContact(Contact cp) {
   if (o1.getClass() == Ant.class && o2.getClass() == AntBlob.class) {
     Ant ant = (Ant) o1;
     if (!ant.attached) {
+      println("add to blob 2");
       antBlob.addToBlob(ant);
       floatingObjects.remove(ant);
     }
@@ -268,15 +273,17 @@ void beginContact(Contact cp) {
   if (o1.getClass() == Floater.class && o2.getClass() == Ant.class) {
     Ant ant = (Ant) o2;
     if (ant.attached) {
-      antBlob.removeFromBlob(ant);
-      floatingObjects.add(ant);
+      if (antBlob.removeFromBlob(ant)) {
+        floatingObjects.add(ant);
+      }
     }
   }
   if (o1.getClass() == Ant.class && o2.getClass() == Floater.class) {
     Ant ant = (Ant) o1;
     if (ant.attached) {
-      antBlob.removeFromBlob(ant);
-      floatingObjects.add(ant);
+      if (antBlob.removeFromBlob(ant)) {
+        floatingObjects.add(ant);
+      }
     }
   }
 
@@ -286,10 +293,12 @@ void beginContact(Contact cp) {
 
     if (!ant2.attached && ant1.attached) {
       antBlob.addToBlob(ant2);
+      println("add to blob 3");
       floatingObjects.remove(ant2);
     }
 
     if (!ant1.attached && ant2.attached) {
+      println("add to blob 4");
       antBlob.addToBlob(ant1);
       floatingObjects.remove(ant1);
     }

@@ -19,10 +19,10 @@ class Floater extends Collidable {
     float sideForce = 5;
 
     if (rand % 2 == 0) {
-      makeBody(new Vec2(random ((width/2) - 100, width/2), height/3 + 10), 400, 0.1);
+      makeBody(new Vec2(random ((width/2) - 100, width/2), height/3 + 10), 400, 0.1, 0.2, 0);
       body.setLinearVelocity(new Vec2(random(-sideForce, 0), random(-2, -15)));
     } else {
-      makeBody(new Vec2(random (width/2, (width/2) + 100), height/3 + 10), 400, 0.1);
+      makeBody(new Vec2(random (width/2, (width/2) + 100), height/3 + 10), 400, 0.1, 0.2, 0);
       body.setLinearVelocity(new Vec2(random(0, sideForce), random(-2, -15)));
     }
     body.setUserData(this);

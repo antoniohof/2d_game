@@ -46,7 +46,7 @@ class Collidable {
   // Is the particle ready for deletion?
   boolean done() {
     // Is it off the bottom of the screen?
-    if (pos.y > height + 100) {
+    if (pos.y > height + 10) {
       killBody();
       return true;
     }
@@ -87,7 +87,7 @@ class Collidable {
   }
 
   // This function adds the rectangle to the box2d world
-  void makeBody(Vec2 center, float density, float friction) {
+  void makeBody(Vec2 center, float density, float friction, float restitution, float yCenterAdd) {
 
     // Define a polygon (this is what we use for a rectangle)
     PolygonShape sd = new PolygonShape();
@@ -103,8 +103,9 @@ class Collidable {
 
     // Define the body and make it from the shape
     BodyDef bd = new BodyDef();
+
     bd.type = bodyType;
-    bd.position.set(box2d.coordPixelsToWorld(center));
+    bd.position.set(box2d.coordPixelsToWorld(new Vec2(center.x, center.y)));
     body = box2d.createBody(bd);
     pos = box2d.getBodyPixelCoord(body);
     FixtureDef fd = new FixtureDef();
@@ -112,7 +113,7 @@ class Collidable {
     // Parameters that affect physics
     fd.density = density;
     fd.friction = friction;
-    fd.restitution = 0.4;
+    fd.restitution = restitution;
     body.createFixture(fd);
   }
 
