@@ -2,7 +2,7 @@ import javafx.util.Pair;
 
 // game state machine
 static enum State {
-  BEGIN, 
+    BEGIN, 
     PLAYING, 
     END
 }
@@ -149,7 +149,6 @@ void draw () {
 
     if (intervalFloaters > minIntervalFloaters) {
       intervalFloaters-=0.07;
-      println(intervalFloaters);
     }
 
     for (int i = 0; i < floatingObjects.size(); i ++) {
